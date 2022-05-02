@@ -6,6 +6,10 @@ from typing import Optional, Any, Union
 import atexit
 
 
+# default width and height of the image
+SIZE = 1000
+
+
 class Vec2D(tuple):
     """
     Class copied from original turtle.py 
@@ -94,7 +98,7 @@ class Turtle:
     _img: Any
     _drw: Any
 
-    def __init__(self, size: int = 500):
+    def __init__(self, size: int = SIZE):
         self.reset()
 
     def __del__(self):
@@ -104,19 +108,19 @@ class Turtle:
 
     def _draw_line(self, x1: float, y1: float, x2: float, y2: float) -> None:
         if self._pendown:
-            x1 += self._size/2
-            x2 += self._size/2
-            y1 += self._size/2
-            y2 += self._size/2
+            x1 = x1 + self._size/2
+            x2 = x2 + self._size/2
+            y1 = self._size/2 - y1
+            y2 = self._size/2 - y2
             self._drw.line([(x1, y1), (x2, y2)], fill=self._pencolor, width=self._pensize)
 
-    def reset(self, size: int = 500) -> None:
+    def reset(self, size: int = SIZE) -> None:
         assert size > 0
         self._size = size
         self._xcor = 0
         self._ycor = 0
         self._heading = 0
-        self._pensize = 1
+        self._pensize = 3
         self._pencolor = 'Black'
         self._pendown = True
         self._isvisible = False
@@ -140,10 +144,10 @@ class Turtle:
         self.forward(-distance)
 
     def right(self, angle: float) -> None:
-        self._heading += angle
+        self._heading -= angle
 
     def left(self, angle: float) -> None:
-        self._heading -= angle
+        self._heading += angle
 
     def goto(self, x: float, y: float) -> None:
         self._draw_line(self._xcor, self._ycor, x, y)
@@ -163,6 +167,26 @@ class Turtle:
     def home(self) -> None:
         self.goto(0, 0)
         self.setheading(0)
+
+    def circle(self, radius: float, extent: Optional[float] = None, steps: Optional[int] = None) -> None:
+        if extent is None:
+            extent = 360.0
+
+        start = 0
+        end = extent
+        x0 = self._xcor - radius
+        x1 = self._xcor + radius
+        y0 = - self._ycor - 2 * radius
+        y1 = - self._ycor
+
+        # # translate home
+        x0 += self._size/2
+        x1 += self._size/2
+        y0 += self._size/2
+        y1 += self._size/2
+
+        xy = [(x0, y0), (x1, y1)]  # Two points to define the bounding box. Sequence of [(x0, y0), (x1, y1)] where x1 >= x0 and y1 >= y0.
+        self._drw.arc(xy, start, end, fill=self._pencolor, width=self._pensize)
 
     def pendown(self) -> None:
         self._pendown = True
@@ -280,6 +304,10 @@ def setheading(to_angle: float) -> None:
 
 def home() -> None:
     return _turtle().home()
+
+
+def circle(radius: float, extent: Optional[float] = None, steps: Optional[int] = None) -> None:
+    return _turtle().circle(radius, extent, steps)
 
 
 def pendown() -> None:
