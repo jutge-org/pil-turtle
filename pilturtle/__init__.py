@@ -179,6 +179,9 @@ class Turtle:
         start = (self._heading - 90) % 360.0
         end = (start + extent) % 360.0
 
+        if extent >= 360 - 1e-3 and abs(start - end) < 1e-3:
+            end -= 1e-3 # make pillow draw full circle instead of nothing
+
         center = self.position() + Vec2D.direction(self._heading + 90) * radius
 
         x0 = self._size/2 + (center[0] - radius)
