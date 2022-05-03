@@ -55,6 +55,11 @@ class Vec2D(tuple):
     def __repr__(self):
         return "(%.2f,%.2f)" % self
 
+    @staticmethod
+    def direction(angle):
+        angle = math.radians(angle)
+        return Vec2D(math.cos(angle), math.sin(angle))
+
 
 """
 Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
@@ -122,6 +127,9 @@ class Turtle:
         self._isvisible = False
         self.clear()
 
+    def done(self, filename: str = _FILENAME) -> None:
+        return self.save(filename)
+
     def clear(self) -> None:
         # this could better be done by painting a rectangle on the current drawing
         self._img = Image.new('RGB', (self._size, self._size), color='White')
@@ -165,34 +173,28 @@ class Turtle:
         self.setheading(0)
 
     def circle(self, radius: float, extent: Optional[float] = None, steps: Optional[int] = None) -> None:
-
         if extent is None:
             extent = 360.0
 
-        # TBD: does not work with extent!=360
+        start = (self._heading - 90) % 360.0
+        end = (start + extent) % 360.0
 
-        start = 0
-        end = extent
+        center = self.position() + Vec2D.direction(self._heading + 90) * radius
 
-        cx = radius * math.cos(math.radians(self._heading) + math.pi/2)
-        cy = radius * math.sin(math.radians(self._heading) + math.pi/2)
-
-        x0 = cx - radius
-        x1 = cx + radius
-        y0 = cy - radius
-        y1 = cy + radius
-
-        x0 = self._size/2 + x0 + self._xcor
-        x1 = self._size/2 + x1 + self._xcor
-        y0 = self._size/2 - y0 - self._ycor
-        y1 = self._size/2 - y1 - self._ycor
+        x0 = self._size/2 + (center[0] - radius)
+        x1 = self._size/2 + (center[0] + radius)
+        y0 = self._size/2 - (center[1] - radius)
+        y1 = self._size/2 - (center[1] + radius)
 
         x0, x1 = min(x0, x1), max(x0, x1)
         y0, y1 = min(y0, y1), max(y0, y1)
 
         xy = [(x0, y0), (x1, y1)]
 
-        self._drw.arc(xy, start, end, fill=self._pencolor, width=self._pensize)
+        self._drw.arc(xy, -end, -start, fill=self._pencolor, width=self._pensize)
+
+        self._heading = (self._heading + extent) % 360.0
+        self._xcor, self._ycor = center + Vec2D.direction(end) * radius
 
     def dot(self, size: Optional[float] = None, color: Optional[Color] = None) -> None:
         if size is None:
@@ -225,7 +227,7 @@ class Turtle:
     def pensize(self, width: Optional[float] = None) -> float:
         if width is not None:
             assert width >= 0
-            self._pensize = width
+            self._pensize = max(1, round(width))
         return self._pensize
 
     def pencolor(self, color: Optional[Color] = None) -> Color:
@@ -255,6 +257,10 @@ class Turtle:
         return self._heading
 
     def speed(self, _speed: Optional[int] = None) -> None:
+        # nothing to do
+        pass
+
+    def color(self, color: Optional[Color] = None) -> None:
         # nothing to do
         pass
 
@@ -294,7 +300,7 @@ def reset(size: int = 500) -> None:
 
 
 def done(filename: str = _FILENAME) -> None:
-    return _turtle().save(filename)
+    return _turtle().done(filename)
 
 
 def forward(distance: float) -> None:
