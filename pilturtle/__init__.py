@@ -3,18 +3,19 @@
 from PIL import Image, ImageDraw
 import math
 from typing import Optional, Any, Union
-import atexit
 
 
 # default width and height of the image
-SIZE = 1000
+_SIZE = 501
+
+# default filename for output
+_FILENAME = 'output.png'
 
 
 class Vec2D(tuple):
-    """
-    Class copied from original turtle.py 
-    (https://github.com/python/cpython/blob/3.10/Lib/turtle.py)
-    """
+
+    # Class copied from original turtle.py at
+    # https://github.com/python/cpython/blob/3.10/Lib/turtle.py
 
     def __new__(cls, x, y):
         return tuple.__new__(cls, (x, y))
@@ -98,13 +99,8 @@ class Turtle:
     _img: Any
     _drw: Any
 
-    def __init__(self, size: int = SIZE):
+    def __init__(self, size: int = _SIZE):
         self.reset()
-
-    def __del__(self):
-        pass
-        # this does not work 😟:
-        # self.save()
 
     def _draw_line(self, x1: float, y1: float, x2: float, y2: float) -> None:
         if self._pendown:
@@ -114,13 +110,13 @@ class Turtle:
             y2 = self._size/2 - y2
             self._drw.line([(x1, y1), (x2, y2)], fill=self._pencolor, width=self._pensize)
 
-    def reset(self, size: int = SIZE) -> None:
+    def reset(self, size: int = _SIZE) -> None:
         assert size > 0
         self._size = size
         self._xcor = 0
         self._ycor = 0
         self._heading = 0
-        self._pensize = 3
+        self._pensize = 1
         self._pencolor = 'Black'
         self._pendown = True
         self._isvisible = False
@@ -131,7 +127,7 @@ class Turtle:
         self._img = Image.new('RGB', (self._size, self._size), color='White')
         self._drw = ImageDraw.Draw(self._img)
 
-    def save(self, filename: str = 'output.png') -> None:
+    def save(self, filename: str = _FILENAME) -> None:
         self._img.save(filename)
 
     def forward(self, distance: float) -> None:
@@ -169,24 +165,53 @@ class Turtle:
         self.setheading(0)
 
     def circle(self, radius: float, extent: Optional[float] = None, steps: Optional[int] = None) -> None:
+
         if extent is None:
             extent = 360.0
 
+        # TBD: does not work with extent!=360
+
         start = 0
         end = extent
-        x0 = self._xcor - radius
-        x1 = self._xcor + radius
-        y0 = - self._ycor - 2 * radius
-        y1 = - self._ycor
 
-        # # translate home
-        x0 += self._size/2
-        x1 += self._size/2
-        y0 += self._size/2
-        y1 += self._size/2
+        cx = radius * math.cos(math.radians(self._heading) + math.pi/2)
+        cy = radius * math.sin(math.radians(self._heading) + math.pi/2)
 
-        xy = [(x0, y0), (x1, y1)]  # Two points to define the bounding box. Sequence of [(x0, y0), (x1, y1)] where x1 >= x0 and y1 >= y0.
+        x0 = cx - radius
+        x1 = cx + radius
+        y0 = cy - radius
+        y1 = cy + radius
+
+        x0 = self._size/2 + x0 + self._xcor
+        x1 = self._size/2 + x1 + self._xcor
+        y0 = self._size/2 - y0 - self._ycor
+        y1 = self._size/2 - y1 - self._ycor
+
+        x0, x1 = min(x0, x1), max(x0, x1)
+        y0, y1 = min(y0, y1), max(y0, y1)
+
+        xy = [(x0, y0), (x1, y1)]
+
         self._drw.arc(xy, start, end, fill=self._pencolor, width=self._pensize)
+
+    def dot(self, size: Optional[float] = None, color: Optional[Color] = None) -> None:
+        if size is None:
+            size = 3
+        if color is None:
+            color = self._pencolor
+        assert size >= 1
+
+        x0 = self._size/2 + self._xcor - size/2
+        x1 = self._size/2 + self._xcor + size/2
+        y0 = self._size/2 - self._ycor + size/2
+        y1 = self._size/2 - self._ycor - size/2
+
+        x0, x1 = min(x0, x1), max(x0, x1)
+        y0, y1 = min(y0, y1), max(y0, y1)
+
+        xy = [(x0, y0), (x1, y1)]
+
+        self._drw.ellipse(xy, fill=color)
 
     def pendown(self) -> None:
         self._pendown = True
@@ -229,6 +254,10 @@ class Turtle:
     def heading(self) -> float:
         return self._heading
 
+    def speed(self, _speed: Optional[int] = None) -> None:
+        # nothing to do
+        pass
+
     fd = forward
     back = backward
     bk = backward
@@ -260,14 +289,12 @@ def _turtle() -> Turtle:
     return _default_turtle
 
 
-def _save(filename: str = 'output.png') -> None:
-    global _default_turtle
-    if _default_turtle is not None:
-        _default_turtle.save(filename)
-
-
 def reset(size: int = 500) -> None:
     return _turtle().reset(size)
+
+
+def done(filename: str = _FILENAME) -> None:
+    return _turtle().save(filename)
 
 
 def forward(distance: float) -> None:
@@ -308,6 +335,10 @@ def home() -> None:
 
 def circle(radius: float, extent: Optional[float] = None, steps: Optional[int] = None) -> None:
     return _turtle().circle(radius, extent, steps)
+
+
+def dot(size: Optional[float] = None, color: Optional[Color] = None) -> None:
+    return _turtle().dot(size, color)
 
 
 def pendown() -> None:
@@ -358,8 +389,16 @@ def heading() -> float:
     return _turtle().heading()
 
 
-def done() -> None:
-    pass
+def speed(speed: Optional[int] = None) -> None:
+    return _turtle().speed(speed)
+
+
+def window_width() -> int:
+    return _SIZE
+
+
+def window_height() -> int:
+    return _SIZE
 
 
 fd = forward
@@ -377,10 +416,3 @@ up = penup
 ht = hideturtle
 st = showturtle
 pos = position
-
-
-#########################################################################
-# hack to save image at the end of the program
-#########################################################################
-
-atexit.register(lambda: _save())
