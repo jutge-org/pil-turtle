@@ -270,8 +270,14 @@ class Turtle:
         # nothing to do
         pass
 
-    def towards(self, x: float, y: float) -> float:
-        direction = Vec2D(x, y) - self.position()
+    def towards(self, x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+        if y is not None:
+            pos = Vec2D(x, y)
+        if isinstance(x, Vec2D):
+            pos = x
+        elif isinstance(x, tuple):
+            pos = Vec2D(*x)
+        direction = pos - self.position()
         return (direction.angle() - self._heading) % 360.0
 
 
@@ -414,7 +420,7 @@ def color(color: Optional[Color] = None) -> None:
     return _turtle().color(color)
 
 
-def towards(x: float, y: float) -> float:
+def towards(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
     return _turtle().towards(x, y)
 
 
