@@ -49,6 +49,9 @@ class Vec2D(tuple):
         c, s = math.cos(angle), math.sin(angle)
         return Vec2D(self[0]*c+perp[0]*s, self[1]*c+perp[1]*s)
 
+    def angle(self):
+        return math.degrees(math.atan2(self[1], self[0])) % 360.0
+
     def __getnewargs__(self):
         return (self[0], self[1])
 
@@ -267,6 +270,11 @@ class Turtle:
         # nothing to do
         pass
 
+    def towards(self, x: float, y: float) -> float:
+        direction = Vec2D(x, y) - self.position()
+        return (direction.angle() - self._heading) % 360.0
+
+
     fd = forward
     back = backward
     bk = backward
@@ -400,6 +408,14 @@ def heading() -> float:
 
 def speed(speed: Optional[int] = None) -> None:
     return _turtle().speed(speed)
+
+
+def color(color: Optional[Color] = None) -> None:
+    return _turtle().color(color)
+
+
+def towards(x: float, y: float) -> float:
+    return _turtle().towards(x, y)
 
 
 def window_width() -> int:
