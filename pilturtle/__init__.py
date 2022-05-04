@@ -280,6 +280,15 @@ class Turtle:
         direction = pos - self.position()
         return (direction.angle() - self._heading) % 360.0
 
+    def distance(self, x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+        if y is not None:
+            pos = Vec2D(x, y)
+        if isinstance(x, Vec2D):
+            pos = x
+        elif isinstance(x, tuple):
+            pos = Vec2D(*x)
+        return abs(pos - self.position())
+
 
     fd = forward
     back = backward
@@ -423,6 +432,9 @@ def color(color: Optional[Color] = None) -> None:
 def towards(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
     return _turtle().towards(x, y)
 
+
+def distance(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+    return _turtle().distance(x, y)
 
 def window_width() -> int:
     return _SIZE
