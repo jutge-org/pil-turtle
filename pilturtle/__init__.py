@@ -1,6 +1,6 @@
 # pil-turtle 💊🐢
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 import math
 from typing import Optional, Any, Union
 
@@ -289,6 +289,22 @@ class Turtle:
             pos = Vec2D(*x)
         return abs(pos - self.position())
 
+    def write(self, arg, move:bool=False, align:str="left", font:tuple[str,int,str]=("Arial", 8, "normal")) -> None:
+        fontsize = font[1]
+        fontname = font[0].lower()
+        try:
+            if fontname[-4:] != ".ttf":
+                fontname = fontname + ".ttf"
+            pilfont = ImageFont.truetype(fontname, fontsize)
+        except:
+            pilfont = ImageFont.truetype("arial.ttf", fontsize)
+        textwidth, textheight = self._drw.textsize(arg, font=pilfont)
+        x0 = self._size/2 + self._xcor
+        y0 = self._size/2 - self._ycor - textheight/2
+        if move:
+            self._xcor += textwidth
+        self._drw.text((x0, y0), arg, fill="black", align=align, font=pilfont)
+
 
     fd = forward
     back = backward
@@ -435,6 +451,11 @@ def towards(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> f
 
 def distance(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
     return _turtle().distance(x, y)
+
+
+def write(arg, move:bool=False, align:str="left", font:tuple[str,int,str]=("Arial", 8, "normal")) -> None:
+    return _turtle().write(arg, move=move, align=align, font=font)
+
 
 def window_width() -> int:
     return _SIZE
