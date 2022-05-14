@@ -69,14 +69,14 @@ The following turtle operations have been implemented and behave as in the stand
 - `speed()`
 
 - `position() | pos()`
-- `towards()` ⚒️
+- `towards()` 
 - `xcor()`
 - `ycor()`
 - `heading()`
-- `distance()` ⚒️
+- `distance()` 
 
-- `degrees()` ⚒️
-- `radians()` ⚒️
+- `degrees()` ❌
+- `radians()` ❌
 
 - `pendown() | pd() | down()`
 - `penup() | pu() | up()`
@@ -94,7 +94,7 @@ The following turtle operations have been implemented and behave as in the stand
 
 - `reset()`
 - `clear()`
-- `write()` ⚒️
+- `write()` 
 
 - `showturtle() | st()`
 - `hideturtle() | ht()`
