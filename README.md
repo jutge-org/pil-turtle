@@ -1,6 +1,6 @@
 # PIL Turtle
 
-This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. The `pilturtle` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it rather provides functionally equivalent operations.
+This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Althought he `pilturtle` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
 
 # Demo
 
@@ -24,7 +24,7 @@ is a file `output.png` with this image:
 
 # Important differences
 
-As said, `pilturtle` does not try to perfectly emulate the standard `turtle`. Some differences exist:
+As said, `pilturtle` does not try to perfectly emulate the standard `turtle` module. These are the major differences:
 
 - `pilturtle` does not work interactively. 
 
@@ -32,7 +32,7 @@ As said, `pilturtle` does not try to perfectly emulate the standard `turtle`. So
     
     The image file is created with the `done()` operation. 
 
-- `pilturtle` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, thw `write` command uses different font and size parameters.
+- `pilturtle` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, the `write` command uses different font and size parameters.
 
 - Colors are specified in a slightly different way: Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
 or as an RBG tuple of integers in the 0-255 range. Here are some examples for the orange color:
