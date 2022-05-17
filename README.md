@@ -1,6 +1,6 @@
 # PIL Turtle
 
-This module tries to emulate the standard `turtle` module on top of PIL, the Python Imaging Library.
+This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. The `pilturtle` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it rather provides functionally equivalent operations.
 
 # Demo
 
@@ -24,13 +24,15 @@ is a file `output.png` with this image:
 
 # Important differences
 
-`pilturtle` tries to emulate the standard `turtle`, but some differences exist:
+As said, `pilturtle` does not try to perfectly emulate the standard `turtle`. Some differences exist:
 
 - `pilturtle` does not work interactively. 
 
     There is no window and you cannot see the turtle moving.
     
     The image file is created with the `done()` operation. 
+
+- `pilturtle` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, thw `write` command uses different font and size parameters.
 
 - Colors are specified in a slightly different way: Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
 or as an RBG tuple of integers in the 0-255 range. Here are some examples for the orange color:
@@ -44,7 +46,9 @@ or as an RBG tuple of integers in the 0-255 range. Here are some examples for th
 
 - Fillings are not implemented.
 
-- The `pilturtle` offers type annotations.
+- All angles are in degrees. There are no `mode` operations.
+
+- `pilturtle` offers type annotations.
 
 
 # Operations
@@ -62,11 +66,6 @@ The following turtle operations have been implemented and behave as in the stand
 - `home()`
 - `circle()`
 - `dot()`
-- `stamp()` ❌
-- `clearstamp()` ❌
-- `clearstamps()` ❌
-- `undo()` ❌
-- `speed()`
 
 - `position() | pos()`
 - `towards()` 
@@ -74,9 +73,6 @@ The following turtle operations have been implemented and behave as in the stand
 - `ycor()`
 - `heading()`
 - `distance()` 
-
-- `degrees()` ❌
-- `radians()` ❌
 
 - `pendown() | pd() | down()`
 - `penup() | pu() | up()`
@@ -88,27 +84,24 @@ The following turtle operations have been implemented and behave as in the stand
 - `pencolor()`
 - `fillcolor()`
 
-- `filling()` ❌
-- `begin_fill()` ❌
-- `end_fill()` ❌
-
 - `reset()`
 - `clear()`
-- `write()` 
+- `write()`: fonts and size parameters use the PIL specification and differ from `turtle`. 
 
-- `showturtle() | st()`
-- `hideturtle() | ht()`
-- `isvisible()`
+- `showturtle() | st()`: does nothing.
+- `hideturtle() | ht()`: does nothing.
+- `isvisible()`: does nothing.
+- `speed()`: does nothing.
 
+- `window_height()`: returns the height of the image.
+- `window_width()`: returns the width of the image.
 
-- `window_height()`
-- `window_width()`
-
-- `done()`: saves the image. By default uses the `output.png` filename but you can provide your own filename.
+- `done()`: saves the image. Uses the `output.png` filename by default but you can provide your own filename. Please remember to call `done()` and the end of your program to save the image.
 
 
 # Credits
 
-- [Jordi Petit](https://github.com/jordi-petit/)
+- [Jordi Petit](https://github.com/jordi-petit)
+- [Izan Beltran](https://github.com/izanbf1803)
 
 Copyright 2022, Universitat Politècnica de Catalunya
