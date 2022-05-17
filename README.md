@@ -99,6 +99,11 @@ The following turtle operations have been implemented and behave as in the stand
 - `done()`: saves the image. Uses the `output.png` filename by default but you can provide your own filename. Please remember to call `done()` and the end of your program to save the image.
 
 
+# Classes
+
+The `pilturtle` module also offers the `Vec2D` and `Turtle` classes. Multiple turtles can be used to produce an image. `TurtleScreen`, `RawTurtle`, `RawPen`, `ScrolledCanvas`, `Shape` and `Screen` classes are not provided.
+
+
 # Installation
 
 - Install with `pip3 install pilturtle`.
