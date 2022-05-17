@@ -99,6 +99,15 @@ The following turtle operations have been implemented and behave as in the stand
 - `done()`: saves the image. Uses the `output.png` filename by default but you can provide your own filename. Please remember to call `done()` and the end of your program to save the image.
 
 
+# Installation
+
+- Install with `pip3 install pilturtle`.
+- Upgrade to latest version with `pip3 install --upgrade pilturtle`.
+- Uninstall with `pip3 uninstall pilturtle`.
+
+Depending on the system you may have to use `pip` rather than `pip3`.
+
+
 # Credits
 
 - [Jordi Petit](https://github.com/jordi-petit)
