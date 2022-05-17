@@ -7,8 +7,8 @@ from os import system
 version = '1.0.2'
 
 setup(
-    name='pilturtle',
-    packages=['pilturtle'],
+    name='turtle_pil',
+    packages=['turtle_pil'],
     install_requires=[
         'pillow',
     ],

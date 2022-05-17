@@ -1,4 +1,4 @@
-from pilturtle import *
+from turtle_pil import *
 
 for _ in range(8):
     circle(100)

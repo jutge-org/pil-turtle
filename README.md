@@ -1,13 +1,13 @@
-# PIL Turtle
+# `turtle_pil`: Turtle on top of PIL
 
-This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `pilturtle` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
+This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `turtle_pil` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
 
 # Demo
 
 The output of this program
 
 ```python
-from pilturtle import *
+from turtle_pil import *
 
 for i in range(8):
     circle(100)
@@ -24,15 +24,15 @@ is a file `output.png` with this image:
 
 # Important differences
 
-As said, `pilturtle` does not try to perfectly emulate the standard `turtle` module. These are the major differences:
+As said, `turtle_pil` does not try to perfectly emulate the standard `turtle` module. These are the major differences:
 
-- `pilturtle` does not work interactively. 
+- `turtle_pil` does not work interactively. 
 
     There is no window and you cannot see the turtle moving.
     
     The image file is created with the `done()` operation. 
 
-- `pilturtle` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, the `write` command uses different font and size parameters.
+- `turtle_pil` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, the `write` command uses different font and size parameters.
 
 - Colors are specified in a slightly different way: Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
 or as an RBG tuple of integers in the 0-255 range. Here are some examples for the orange color:
@@ -48,7 +48,7 @@ or as an RBG tuple of integers in the 0-255 range. Here are some examples for th
 
 - All angles are in degrees. There are no `mode` operations.
 
-- `pilturtle` offers type annotations.
+- `turtle_pil` offers type annotations.
 
 
 # Operations
@@ -101,14 +101,14 @@ The following turtle operations have been implemented and behave as in the stand
 
 # Classes
 
-The `pilturtle` module also offers the `Vec2D` and `Turtle` classes. Multiple turtles can be used to produce an image. `TurtleScreen`, `RawTurtle`, `RawPen`, `ScrolledCanvas`, `Shape` and `Screen` classes are not provided.
+The `turtle_pil` module also offers the `Vec2D` and `Turtle` classes. Multiple turtles can be used to produce an image. `TurtleScreen`, `RawTurtle`, `RawPen`, `ScrolledCanvas`, `Shape` and `Screen` classes are not provided.
 
 
 # Installation
 
-- Install with `pip3 install pilturtle`.
-- Upgrade to latest version with `pip3 install --upgrade pilturtle`.
-- Uninstall with `pip3 uninstall pilturtle`.
+- Install with `pip3 install turtle_pil`.
+- Upgrade to latest version with `pip3 install --upgrade turtle_pil`.
+- Uninstall with `pip3 uninstall turtle_pil`.
 
 Depending on the system you may have to use `pip` rather than `pip3`.
 

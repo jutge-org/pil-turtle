@@ -1,4 +1,4 @@
-from pilturtle import *
+from turtle_pil import *
 
 speed(100)
 ht()
