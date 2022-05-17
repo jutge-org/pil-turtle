@@ -1,6 +1,6 @@
 # `turtle_pil`: Turtle on top of PIL
 
-This module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `turtle_pil` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
+The `turtle_pil` module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `turtle_pil` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
 
 # Demo
 
