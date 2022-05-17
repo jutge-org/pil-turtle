@@ -183,7 +183,7 @@ class Turtle:
         end = (start + extent) % 360.0
 
         if extent >= 360 - 1e-3 and abs(start - end) < 1e-3:
-            end -= 1e-3 # make pillow draw full circle instead of nothing
+            end -= 1e-3  # make pillow draw full circle instead of nothing
 
         center = self.position() + Vec2D.direction(self._heading + 90) * radius
 
@@ -270,7 +270,7 @@ class Turtle:
         # nothing to do
         pass
 
-    def towards(self, x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+    def towards(self, x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
         if y is not None:
             pos = Vec2D(x, y)
         if isinstance(x, Vec2D):
@@ -280,7 +280,7 @@ class Turtle:
         direction = pos - self.position()
         return (direction.angle() - self._heading) % 360.0
 
-    def distance(self, x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+    def distance(self, x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
         if y is not None:
             pos = Vec2D(x, y)
         if isinstance(x, Vec2D):
@@ -289,7 +289,8 @@ class Turtle:
             pos = Vec2D(*x)
         return abs(pos - self.position())
 
-    def write(self, arg, move:bool=False, align:str="left", font:tuple[str,int,str]=("Arial", 8, "normal")) -> None:
+    def write(self, arg, move: bool = False, align: str = "left", font: tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
+        text = str(arg)
         fontsize = font[1]
         fontname = font[0].lower()
         try:
@@ -298,13 +299,12 @@ class Turtle:
             pilfont = ImageFont.truetype(fontname, fontsize)
         except:
             pilfont = ImageFont.truetype("arial.ttf", fontsize)
-        textwidth, textheight = self._drw.textsize(arg, font=pilfont)
+        textwidth, textheight = self._drw.textsize(text, font=pilfont)
         x0 = self._size/2 + self._xcor
         y0 = self._size/2 - self._ycor - textheight/2
         if move:
             self._xcor += textwidth
-        self._drw.text((x0, y0), arg, fill="black", align=align, font=pilfont)
-
+        self._drw.text((x0, y0), text, fill="black", align=align, font=pilfont)
 
     fd = forward
     back = backward
@@ -445,15 +445,15 @@ def color(color: Optional[Color] = None) -> None:
     return _turtle().color(color)
 
 
-def towards(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+def towards(x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
     return _turtle().towards(x, y)
 
 
-def distance(x: Union[float, tuple[float,float]], y: Optional[float] = None) -> float:
+def distance(x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
     return _turtle().distance(x, y)
 
 
-def write(arg, move:bool=False, align:str="left", font:tuple[str,int,str]=("Arial", 8, "normal")) -> None:
+def write(arg, move: bool = False, align: str = "left", font: tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
     return _turtle().write(arg, move=move, align=align, font=font)
 
 
