@@ -304,7 +304,7 @@ class Turtle:
         y0 = self._size/2 - self._ycor - textheight/2
         if move:
             self._xcor += textwidth
-        self._drw.text((x0, y0), text, fill="black", align=align, font=pilfont)
+        self._drw.text((x0, y0), text, fill=self._pencolor, align=align, font=pilfont)
 
     fd = forward
     back = backward
