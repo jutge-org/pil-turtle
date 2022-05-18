@@ -298,7 +298,7 @@ class Turtle:
                 fontname = fontname + ".ttf"
             pilfont = ImageFont.truetype(fontname, fontsize)
         except:
-            pilfont = ImageFont.truetype("arial.ttf", fontsize)
+            pilfont = ImageFont.truetype("Arial.ttf", fontsize)
         textwidth, textheight = self._drw.textsize(text, font=pilfont)
         x0 = self._size/2 + self._xcor
         y0 = self._size/2 - self._ycor - textheight/2
