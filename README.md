@@ -1,6 +1,6 @@
 # `turtle_pil`: Turtle on top of PIL
 
-The `turtle_pil` module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `turtle_pil` module does not to attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
+The `turtle_pil` module implements the standard `turtle` module on top of PIL, the Python Imaging Library. Although the `turtle_pil` module does not  attempt to be a pixel-by-pixel replacement of `turtle`, it provides functionally equivalent drawing operations.
 
 # Demo
 
@@ -14,7 +14,7 @@ for i in range(8):
     right(45)
 dot(10, 'red')
 
-done()
+done()  # don't forget it!
 ```
 
 is a file `output.png` with this image:
@@ -34,7 +34,7 @@ As said, `turtle_pil` does not try to perfectly emulate the standard `turtle` mo
 
 - `turtle_pil` is not pixel-by-pixel compatible with `turtle`, this is not its goal. However it tries to provide the same functionalities to the implemented operations. For instance, the `write` command uses different font and size parameters.
 
-- Colors are specified in a slightly different way: Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
+- Colors are specified in a slightly different but richer way: Colors can be given by a string as described in https://pillow.readthedocs.io/en/stable/reference/ImageColor.html
 or as an RBG tuple of integers in the 0-255 range. Here are some examples for the orange color:
 
     - `'Orange'`
@@ -47,8 +47,6 @@ or as an RBG tuple of integers in the 0-255 range. Here are some examples for th
 - Fillings are not implemented.
 
 - All angles are in degrees. There are no `mode` operations.
-
-- `turtle_pil` offers type annotations.
 
 
 # Operations
