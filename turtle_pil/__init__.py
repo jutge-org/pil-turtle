@@ -6,7 +6,7 @@ from typing import Optional, Any, Union, Tuple
 
 
 # default width and height of the image
-_SIZE = 401
+_SIZE = 501
 
 # default filename for output
 _FILENAME = 'output.png'
