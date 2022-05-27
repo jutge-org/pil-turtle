@@ -2,11 +2,11 @@
 
 from PIL import Image, ImageDraw, ImageFont
 import math
-from typing import Optional, Any, Union
+from typing import Optional, Any, Union, Tuple
 
 
 # default width and height of the image
-_SIZE = 501
+_SIZE = 401
 
 # default filename for output
 _FILENAME = 'output.png'
@@ -76,7 +76,7 @@ or as an RBG tuple of integers in the 0-255 range. Here are some examples for th
 (255,165,0)
 """
 
-Color = Union[str, tuple[int, int, int]]
+Color = Union[str, Tuple[int, int, int]]
 
 
 class Turtle:
@@ -270,7 +270,7 @@ class Turtle:
         # nothing to do
         pass
 
-    def towards(self, x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
+    def towards(self, x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:
         if y is not None:
             pos = Vec2D(x, y)
         if isinstance(x, Vec2D):
@@ -280,7 +280,7 @@ class Turtle:
         direction = pos - self.position()
         return (direction.angle() - self._heading) % 360.0
 
-    def distance(self, x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
+    def distance(self, x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:
         if y is not None:
             pos = Vec2D(x, y)
         if isinstance(x, Vec2D):
@@ -289,7 +289,7 @@ class Turtle:
             pos = Vec2D(*x)
         return abs(pos - self.position())
 
-    def write(self, arg, move: bool = False, align: str = "left", font: tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
+    def write(self, arg, move: bool = False, align: str = "left", font: Tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
         text = str(arg)
         fontsize = font[1]
         fontname = font[0].lower()
@@ -445,15 +445,15 @@ def color(color: Optional[Color] = None) -> None:
     return _turtle().color(color)
 
 
-def towards(x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
+def towards(x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:
     return _turtle().towards(x, y)
 
 
-def distance(x: Union[float, tuple[float, float]], y: Optional[float] = None) -> float:
+def distance(x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:
     return _turtle().distance(x, y)
 
 
-def write(arg, move: bool = False, align: str = "left", font: tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
+def write(arg, move: bool = False, align: str = "left", font: Tuple[str, int, str] = ("Arial", 8, "normal")) -> None:
     return _turtle().write(arg, move=move, align=align, font=font)
 
 
