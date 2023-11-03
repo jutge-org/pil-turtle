@@ -156,7 +156,9 @@ class Turtle:
     def left(self, angle: float) -> None:
         self._heading += angle
 
-    def goto(self, x: float, y: float) -> None:
+    def goto(self, x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> None:
+        if y is None:
+            x, y = x
         self._draw_line(self._xcor, self._ycor, x, y)
         self._xcor, self._ycor = x, y
 
@@ -361,7 +363,7 @@ def left(angle: float) -> None:
     return _turtle().left(angle)
 
 
-def goto(x: float, y: float) -> None:
+def goto(x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> None:
     return _turtle().goto(x, y)
 
 
