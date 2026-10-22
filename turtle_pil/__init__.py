@@ -97,26 +97,79 @@ class Turtle:
     # pen color
     _pencolor: Color
 
+    # fill color
+    _fillcolor: Color
+
     # pen down
     _pendown: bool
 
     # hide/show turtle (we do not show it but maintain its state)
     _isvisible: bool
 
-    # PIL
+    # points recorded between begin_fill() and end_fill(); None when not filling
+    _fillpath: Optional[list]
+
+    # PIL. Strokes drawn while filling go to _overlay so the fill can sit underneath them.
     _img: Any
+    _overlay: Optional[Any]
     _drw: Any
 
     def __init__(self, size: int = _SIZE):
         self.reset()
 
+    def _screen_xy(self, x: float, y: float) -> Tuple[float, float]:
+        return (x + self._size/2, self._size/2 - y)
+
     def _draw_line(self, x1: float, y1: float, x2: float, y2: float) -> None:
         if self._pendown:
-            x1 = x1 + self._size/2
-            x2 = x2 + self._size/2
-            y1 = self._size/2 - y1
-            y2 = self._size/2 - y2
-            self._drw.line([(x1, y1), (x2, y2)], fill=self._pencolor, width=self._pensize)
+            self._drw.line(
+                [self._screen_xy(x1, y1), self._screen_xy(x2, y2)],
+                fill=self._pencolor,
+                width=self._pensize,
+            )
+
+    def _move_to(self, x: float, y: float) -> None:
+        self._draw_line(self._xcor, self._ycor, x, y)
+        self._xcor, self._ycor = x, y
+        self._track_fill()
+
+    def _track_fill(self) -> None:
+        # Pen-up moves are part of the polygon, as in the standard turtle.
+        if self._fillpath is not None:
+            self._fillpath.append(Vec2D(self._xcor, self._ycor))
+
+    def _arc_fill_steps(self, radius: float, extent: float) -> int:
+        # Enough chords that the polygon stays within a fraction of a pixel of the arc.
+        span = min(abs(extent), 360.0)
+        r = abs(radius)
+        if span < 1e-9 or r < 1e-9:
+            return 1
+        max_step = math.sqrt(0.4 / r)
+        return max(1, int(math.ceil(math.radians(span) / max_step)))
+
+    def _append_arc_fill(self, center: Vec2D, radius: float, start: float, extent: float, final: Vec2D) -> None:
+        if self._fillpath is None:
+            return
+        steps = self._arc_fill_steps(radius, extent)
+        for i in range(1, steps):
+            angle = start + extent * i / steps
+            self._fillpath.append(center + Vec2D.direction(angle) * radius)
+        self._fillpath.append(final)
+
+    def _render(self) -> Any:
+        if self._overlay is None:
+            return self._img
+        return Image.alpha_composite(self._img.convert('RGBA'), self._overlay).convert('RGB')
+
+    def _close_fill_layer(self, fill: Optional[Any] = None) -> None:
+        base = self._img.convert('RGBA')
+        if fill is not None:
+            base = Image.alpha_composite(base, fill)
+        if self._overlay is not None:
+            base = Image.alpha_composite(base, self._overlay)
+        self._img = base.convert('RGB')
+        self._overlay = None
+        self._drw = ImageDraw.Draw(self._img)
 
     def reset(self, size: int = _SIZE) -> None:
         assert size > 0
@@ -126,8 +179,11 @@ class Turtle:
         self._heading = 0
         self._pensize = 1
         self._pencolor = 'Black'
+        self._fillcolor = 'Black'
         self._pendown = True
         self._isvisible = False
+        self._fillpath = None
+        self._overlay = None
         self.clear()
 
     def done(self, filename: str = _FILENAME) -> None:
@@ -135,17 +191,18 @@ class Turtle:
 
     def clear(self) -> None:
         # this could better be done by painting a rectangle on the current drawing
+        self._fillpath = None
+        self._overlay = None
         self._img = Image.new('RGB', (self._size, self._size), color='White')
         self._drw = ImageDraw.Draw(self._img)
 
     def save(self, filename: str = _FILENAME) -> None:
-        self._img.save(filename)
+        self._render().save(filename)
 
     def forward(self, distance: float) -> None:
         x = self._xcor + distance * math.cos(math.radians(self._heading))
         y = self._ycor + distance * math.sin(math.radians(self._heading))
-        self._draw_line(self._xcor, self._ycor, x, y)
-        self._xcor, self._ycor = x, y
+        self._move_to(x, y)
 
     def backward(self, distance: float) -> None:
         self.forward(-distance)
@@ -159,16 +216,13 @@ class Turtle:
     def goto(self, x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> None:
         if y is None:
             x, y = x
-        self._draw_line(self._xcor, self._ycor, x, y)
-        self._xcor, self._ycor = x, y
+        self._move_to(x, y)
 
     def setx(self, x: float) -> None:
-        self._draw_line(self._xcor, self._ycor, x, self._ycor)
-        self._xcor = x
+        self._move_to(x, self._ycor)
 
     def sety(self, y: float) -> None:
-        self._draw_line(self._xcor, self._ycor, self._xcor, y)
-        self._ycor = y
+        self._move_to(self._xcor, y)
 
     def setheading(self, to_angle: float) -> None:
         self._heading = to_angle
@@ -199,10 +253,13 @@ class Turtle:
 
         xy = [(x0, y0), (x1, y1)]
 
-        self._drw.arc(xy, -end, -start, fill=self._pencolor, width=self._pensize)
+        if self._pendown:
+            self._drw.arc(xy, -end, -start, fill=self._pencolor, width=self._pensize)
 
         self._heading = (self._heading + extent) % 360.0
-        self._xcor, self._ycor = center + Vec2D.direction(end) * radius
+        final = center + Vec2D.direction(end) * radius
+        self._append_arc_fill(center, radius, start, extent, final)
+        self._xcor, self._ycor = final
 
     def dot(self, size: Optional[float] = None, color: Optional[Color] = None) -> None:
         if size is None:
@@ -223,6 +280,30 @@ class Turtle:
 
         self._drw.ellipse(xy, fill=color)
 
+    def begin_fill(self) -> None:
+        if not self.filling():
+            # Keep the outline of this shape above the fill, and older drawing below it.
+            self._overlay = Image.new('RGBA', (self._size, self._size), (0, 0, 0, 0))
+            self._drw = ImageDraw.Draw(self._overlay)
+        self._fillpath = [self.position()]
+
+    def end_fill(self) -> None:
+        if not self.filling():
+            return
+        path = self._fillpath
+        self._fillpath = None
+        fill = None
+        if len(path) > 2 and self._fillcolor not in (None, ''):
+            fill = Image.new('RGBA', (self._size, self._size), (0, 0, 0, 0))
+            ImageDraw.Draw(fill).polygon(
+                [self._screen_xy(x, y) for x, y in path],
+                fill=self._fillcolor,
+            )
+        self._close_fill_layer(fill)
+
+    def filling(self) -> bool:
+        return self._fillpath is not None
+
     def pendown(self) -> None:
         self._pendown = True
 
@@ -242,6 +323,15 @@ class Turtle:
         if color is not None:
             self._pencolor = color
         return self._pencolor
+
+    def fillcolor(self, *args: Color) -> Color:
+        if len(args) == 1:
+            self._fillcolor = args[0]
+        elif len(args) == 3:
+            self._fillcolor = args
+        elif len(args) != 0:
+            raise TypeError('fillcolor() takes 0, 1, or 3 arguments')
+        return self._fillcolor
 
     def hideturtle(self) -> None:
         self._isvisible = False
@@ -268,9 +358,18 @@ class Turtle:
         # nothing to do
         pass
 
-    def color(self, color: Optional[Color] = None) -> None:
-        # nothing to do
-        pass
+    def color(self, *args: Color) -> Optional[Tuple[Color, Color]]:
+        if not args:
+            return self._pencolor, self._fillcolor
+        if len(args) == 1:
+            self._pencolor = self._fillcolor = args[0]
+        elif len(args) == 2:
+            self._pencolor, self._fillcolor = args
+        elif len(args) == 3:
+            self._pencolor = self._fillcolor = args
+        else:
+            raise TypeError('color() takes from 0 to 3 arguments')
+        return None
 
     def towards(self, x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:
         if y is not None:
@@ -306,6 +405,7 @@ class Turtle:
         y0 = self._size/2 - self._ycor - textheight/2
         if move:
             self._xcor += textwidth
+            self._track_fill()
         self._drw.text((x0, y0), text, fill=self._pencolor, align=align, font=pilfont)
 
     fd = forward
@@ -391,6 +491,18 @@ def dot(size: Optional[float] = None, color: Optional[Color] = None) -> None:
     return _turtle().dot(size, color)
 
 
+def begin_fill() -> None:
+    return _turtle().begin_fill()
+
+
+def end_fill() -> None:
+    return _turtle().end_fill()
+
+
+def filling() -> bool:
+    return _turtle().filling()
+
+
 def pendown() -> None:
     return _turtle().pendown()
 
@@ -409,6 +521,10 @@ def pensize(width: Optional[float] = None) -> float:
 
 def pencolor(color: Optional[Color] = None) -> Color:
     return _turtle().pencolor(color)
+
+
+def fillcolor(*args: Color) -> Color:
+    return _turtle().fillcolor(*args)
 
 
 def hideturtle() -> None:
@@ -443,8 +559,8 @@ def speed(speed: Optional[int] = None) -> None:
     return _turtle().speed(speed)
 
 
-def color(color: Optional[Color] = None) -> None:
-    return _turtle().color(color)
+def color(*args: Color) -> Optional[Tuple[Color, Color]]:
+    return _turtle().color(*args)
 
 
 def towards(x: Union[float, Tuple[float, float]], y: Optional[float] = None) -> float:

@@ -44,8 +44,6 @@ or as an RBG tuple of integers in the 0-255 range. Here are some examples for th
     - `'hsv(39,100%,100%)'`
     - `(255,165,0)`
 
-- Fillings are not implemented.
-
 - All angles are in degrees. There are no `mode` operations.
 
 
@@ -64,6 +62,9 @@ The following turtle operations have been implemented and behave as in the stand
 - `home()`
 - `circle()`
 - `dot()`
+- `begin_fill()`
+- `end_fill()`
+- `filling()`
 
 - `position() | pos()`
 - `towards()` 
