@@ -4,7 +4,7 @@
 from setuptools import setup
 from os import system
 
-version = '1.2.4'
+version = '1.2.5'
 
 setup(
     name='turtle_pil',
