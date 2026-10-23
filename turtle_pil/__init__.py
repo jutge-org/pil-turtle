@@ -400,7 +400,9 @@ class Turtle:
             pilfont = ImageFont.truetype(fontname, fontsize)
         except:
             pilfont = ImageFont.truetype("Arial.ttf", fontsize)
-        textwidth, textheight = self._drw.textsize(text, font=pilfont)
+        left, top, right, bottom = self._drw.textbbox((0, 0), text, font=pilfont)
+        textwidth = right - left
+        textheight = bottom - top
         x0 = self._size/2 + self._xcor
         y0 = self._size/2 - self._ycor - textheight/2
         if move:
