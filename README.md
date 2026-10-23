@@ -98,6 +98,13 @@ The following turtle operations have been implemented and behave as in the stand
 - `done()`: saves the image. Uses the `output.png` filename by default but you can provide your own filename. Please remember to call `done()` and the end of your program to save the image.
 
 
+# Fill
+
+Call `fillcolor()` to choose the interior color, then `begin_fill()` before tracing the shape and `end_fill()` when the path is closed. At `end_fill()`, the recorded path is filled as a polygon; strokes drawn in between are composited on top so outlines stay visible.
+
+Vertices are added on every move, including with the pen up, as in standard `turtle`. A fill is drawn only if the path has more than two points and `fillcolor` is set. Arcs from `circle()` are approximated with polygon segments for the fill. Use `filling()` to test whether a fill is in progress.
+
+
 # Classes
 
 The `turtle_pil` module also offers the `Vec2D` and `Turtle` classes. Multiple turtles can be used to produce an image. `TurtleScreen`, `RawTurtle`, `RawPen`, `ScrolledCanvas`, `Shape` and `Screen` classes are not provided.
